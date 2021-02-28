@@ -2,6 +2,7 @@
  * PDF manipulation related routes
  */
 
+var fs = require('fs')
 var path = require("path");
 
 const express = require("express");
@@ -38,6 +39,21 @@ router.post("/zk", upload.single("avatar"), async (req, res) => {
 });
 */
 
+router.get("/zk", async (req, res) => {
+  try {
+    console.log(" SENding file...")
+    var file = fs.createReadStream(`${appDir}/public/output/compressed-cv.pdf`);
+    var stat = fs.statSync(`${appDir}/public/output/compressed-cv.pdf`);
+    res.setHeader('Content-Length', stat.size);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=quote.pdf');
+    file.pipe(res);
+
+  } catch (e) {
+    res.status(400).send({ Error: e.message });
+  }
+});
+
 router.post("/compression", upload.single("avatar"), async (req, res) => {
   try {
     const task = await sdk.createTask("compress");
@@ -47,7 +63,14 @@ router.post("/compression", upload.single("avatar"), async (req, res) => {
       `${appDir}/public/output/compressed-${req.file.originalname}`
     );
 
-	res.download(`${appDir}/public/output/compressed-${req.file.originalname}`);	
+	// res.download(`${appDir}/public/output/compressed-${req.file.originalname}`);	
+	res.sendFile(`${appDir}/public/output/compressed-${req.file.originalname}`);	
+
+
+  // var data =fs.readFileSync(`${appDir}/public/output/compressed-${req.file.originalname}`);
+  // res.contentType("application/pdf");
+  // res.send(data);
+ 
 
 /*    res.status(200).send({Message:"Compression Successful"});   */
   } catch (e) {
