@@ -39,11 +39,13 @@ router.post("/zk", upload.single("avatar"), async (req, res) => {
 });
 */
 
-router.get("/zk", async (req, res) => {
+router.get("/processedfile/:fileId", async (req, res) => {
   try {
     console.log(" SENding file...")
-    var file = fs.createReadStream(`${appDir}/public/output/compressed-cv.pdf`);
-    var stat = fs.statSync(`${appDir}/public/output/compressed-cv.pdf`);
+    const fileId = req.params.fileId
+
+    var file = fs.createReadStream(`${appDir}/public/output/${fileId}`);
+    var stat = fs.statSync(`${appDir}/public/output/${fileId}`);
     res.setHeader('Content-Length', stat.size);
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=quote.pdf');
@@ -64,17 +66,11 @@ router.post("/compression", upload.single("avatar"), async (req, res) => {
     );
 
 	// res.download(`${appDir}/public/output/compressed-${req.file.originalname}`);	
-	res.sendFile(`${appDir}/public/output/compressed-${req.file.originalname}`);	
+	// res.sendFile(`${appDir}/public/output/compressed-${req.file.originalname}`);	
 
-
-  // var data =fs.readFileSync(`${appDir}/public/output/compressed-${req.file.originalname}`);
-  // res.contentType("application/pdf");
-  // res.send(data);
- 
-
-/*    res.status(200).send({Message:"Compression Successful"});   */
+  res.status(200).send({ message: "Compression Successful", fileId: `compressed-${req.file.originalname}` });
   } catch (e) {
-    res.status(400).send({ Error: e.message });
+    res.status(400).send({ error: e.message });
   }
 });
 
