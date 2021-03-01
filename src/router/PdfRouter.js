@@ -136,8 +136,8 @@ router.post("/pageNumber", upload.single("avatar"), async (req, res) => {
     await task.download(
       `${appDir}/public/output/Page_Number_Added-${req.file.originalname}`
     );
-    res.status(200).send({Message:"Page Number Added"});
-    // res.download(`${appDir}/public/output/Page_Number_Added-${req.file.originalname}`)
+
+    res.status(200).send({ message: "Page numbers Added.", fileId: `Page_Number_Added-${req.file.originalname}` });
   } catch (e) {
     res.status(400).send({ Error: e.message });
   }
